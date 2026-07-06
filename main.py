@@ -74,9 +74,10 @@ def main():
         )
 
         for result in results:
+            if result["state"] == "OPEN":
             print(
                 f"Port {result['port']} : {result['state']}"
-            )
+        )
 
     elif args.command == "http":
         print(f"Analyse HTTP demandée sur : {args.url}")

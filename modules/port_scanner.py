@@ -5,8 +5,8 @@ def scan_port(target, port):
     """
     Teste un port TCP sur une cible.
 
-    Retourne l'état du port :
-    OPEN, CLOSED ou FILTERED.
+    Retourne :
+    OPEN, CLOSED ou FILTERED
     """
 
     try:
@@ -17,20 +17,22 @@ def scan_port(target, port):
 
         sock.settimeout(1)
 
-        result = sock.connect_ex((target, port))
+        sock.connect((target, port))
 
         sock.close()
 
-        if result == 0:
-            return "OPEN"
+        return "OPEN"
 
-        else:
-            return "CLOSED"
+    except ConnectionRefusedError:
+        return "CLOSED"
+
+    except TimeoutError:
+        return "FILTERED"
 
     except socket.timeout:
         return "FILTERED"
 
-    except socket.error:
+    except OSError:
         return "FILTERED"
 
 def scan_ports(target, start_port, end_port):
