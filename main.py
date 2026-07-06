@@ -1,4 +1,5 @@
 import argparse
+from modules.port_scanner import scan_ports
 
 
 def create_parser():
@@ -65,6 +66,17 @@ def main():
     if args.command == "scan":
         print(f"Cible : {args.target}")
         print(f"Plage de ports : {args.start} - {args.end}")
+
+        results = scan_ports(
+            args.target,
+            args.start,
+            args.end
+        )
+
+        for result in results:
+            print(
+                f"Port {result['port']} : {result['state']}"
+            )
 
     elif args.command == "http":
         print(f"Analyse HTTP demandée sur : {args.url}")
