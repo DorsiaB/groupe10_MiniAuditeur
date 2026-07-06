@@ -21,6 +21,20 @@ def create_parser():
         help="IP ou nom d'hôte à analyser"
     )
 
+    scan_parser.add_argument(
+        "--start",
+        type=int,
+        default=1,
+        help="Premier port à scanner"
+    )
+
+    scan_parser.add_argument(
+        "--end",
+        type=int,
+        default=1024,
+        help="Dernier port à scanner"
+    )
+
     http_parser = subparsers.add_parser(
         "http",
         help="Analyser les en-têtes HTTP d'une URL"
@@ -49,7 +63,8 @@ def main():
     args = parser.parse_args()
 
     if args.command == "scan":
-        print(f"Scan demandé sur : {args.target}")
+        print(f"Cible : {args.target}")
+        print(f"Plage de ports : {args.start} - {args.end}")
 
     elif args.command == "http":
         print(f"Analyse HTTP demandée sur : {args.url}")
