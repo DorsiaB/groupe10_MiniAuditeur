@@ -48,6 +48,21 @@ def calculate_score(headers):
 
     return score
 
+def security_level(score):
+    """
+    Retourne un niveau de sécurité
+    selon le score obtenu.
+    """
+
+    if score == 4:
+        return "Bon"
+
+    elif score >= 2:
+        return "Moyen"
+
+    else:
+        return "Faible"
+
 if __name__ == "__main__":
     url = "https://example.com"
 
@@ -59,9 +74,12 @@ if __name__ == "__main__":
     else:
         print(f"Analyse de : {url}\n")
 
-    for header, value in headers.items():
-        print(f"{header} : {value}")
+        for header, value in headers.items():
+            print(f"{header} : {value}")
 
-    score = calculate_score(headers)
+        score = calculate_score(headers)
 
-    print(f"\nScore de sécurité : {score}/4")
+        level = security_level(score)
+
+        print(f"\nScore de sécurité : {score}/4")
+        print(f"Niveau : {level}")
