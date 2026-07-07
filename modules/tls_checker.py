@@ -2,6 +2,23 @@ import ssl
 import socket
 from datetime import datetime
 
+def tls_status(days_remaining):
+    """
+    Détermine le niveau d'état du certificat TLS.
+    """
+
+    if days_remaining <= 0:
+        return "EXPIRE"
+
+    elif days_remaining <= 7:
+        return "CRITIQUE"
+
+    elif days_remaining <= 30:
+        return "ATTENTION"
+
+    else:
+        return "OK"
+
 
 def check_tls(domain):
     """
@@ -32,10 +49,13 @@ def check_tls(domain):
             expire_date - datetime.now()
         ).days
 
+        status = tls_status(days_remaining)
+
         return {
             "valid": True,
             "expiration": expire_date.strftime("%Y-%m-%d"),
-            "days_remaining": days_remaining
+            "days_remaining": days_remaining,
+            "status": status
         }
 
 

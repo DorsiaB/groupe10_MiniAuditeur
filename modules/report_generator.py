@@ -8,7 +8,8 @@ def generate_report(
     port_results,
     http_results=None,
     score=None,
-    level=None
+    level=None,
+    tls_results=None
 ):
     """
     Génère un rapport Markdown d'audit.
@@ -65,36 +66,56 @@ def generate_report(
             f"{filtered_ports} ports filtrés.\n"
         )
 
-        if http_results:
+        if tls_results:
 
-            report.write("\n## Analyse des en-têtes HTTP\n\n")
-           
-            recommendations = generate_recommendations(
-                http_results,
-                port_results
+            report.write(
+                "\n## Analyse TLS\n\n"
             )
 
-            for header, value in http_results.items():
+            if tls_results["valid"]:
+
                 report.write(
-                    f"- {header} : {value}\n"
+                    "- Certificat : Valide\n"
                 )
 
+                report.write(
+                    f"- Expiration : {tls_results['expiration']}\n"
+                )
+
+                report.write(
+                    f"- Jours restants : {tls_results['days_remaining']}\n"
+                )
+
+                report.write(
+                    f"- État : {tls_results['status']}\n"
+                )
+
+            else:
+
+                report.write(
+                    "- Certificat : Invalide\n"
+                )
+
+                report.write(
+                    f"- Erreur : {tls_results.get('error', 'Erreur inconnue')}\n"
+                )
+                
+        recommendations = generate_recommendations(
+            http_results,
+            port_results,
+            tls_results
+        )
+
+        if recommendations:
 
             report.write(
-                f"\n**Score sécurité : {score}/4**\n\n"
+                "\n## Recommandations\n\n"
             )
 
-            report.write(
-                f"**Niveau : {level}**\n"
-            )
-
-            report.write("\n## Recommandations\n\n")
-
-        for recommendation in recommendations:
-            report.write(
-                f"- {recommendation}\n"
-            )
-
+            for recommendation in recommendations:
+                report.write(
+                    f"- {recommendation}\n"
+                )
     return filename
 
 if __name__ == "__main__":

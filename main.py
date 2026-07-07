@@ -146,9 +146,16 @@ def main():
         headers = None
         score = None
         level = None
+        tls_results = None
 
         if args.url:
+
             headers = analyze_headers(args.url)
+
+            tls_results = check_tls(
+                args.url.replace("https://", "")
+            )
+
 
             if headers:
                 score = calculate_score(headers)
@@ -160,11 +167,13 @@ def main():
             ports,
             headers,
             score,
-            level
+            level,
+            tls_results
         )
 
         print(f"\nRapport généré : {report}")
-        
+
+
     elif args.command == "tls":
 
         print(f"Analyse TLS demandée sur : {args.domain}\n")

@@ -1,4 +1,4 @@
-def generate_recommendations(headers, ports):
+def generate_recommendations(headers, ports, tls_results=None):
     """
     Génère des recommandations selon
     les résultats de l'audit.
@@ -47,5 +47,26 @@ def generate_recommendations(headers, ports):
                 recommendations.append(
                     "Vérifier la configuration SMTP afin d'éviter un relais ouvert."
                 )
+    if tls_results:
+
+        if tls_results["status"] == "ATTENTION":
+
+            recommendations.append(
+                "Le certificat TLS expire bientôt. Prévoir son renouvellement."
+            )
+
+
+        elif tls_results["status"] == "CRITIQUE":
+
+            recommendations.append(
+                "Le certificat TLS expire dans moins de 7 jours. Renouvellement urgent nécessaire."
+            )
+
+
+        elif tls_results["status"] == "EXPIRE":
+
+            recommendations.append(
+                "Le certificat TLS est expiré. Le remplacer immédiatement."
+            )
 
     return recommendations
