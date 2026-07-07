@@ -2,6 +2,7 @@ import argparse
 from modules.port_scanner import scan_ports
 from modules.http_analyzer import analyze_headers, calculate_score, security_level
 from modules.report_generator import generate_report
+from modules.tls_checker import check_tls
 
 
 def create_parser():
@@ -163,10 +164,25 @@ def main():
         )
 
         print(f"\nRapport généré : {report}")
-
+        
     elif args.command == "tls":
-        print(f"Analyse TLS demandée sur : {args.domain}")
 
+        print(f"Analyse TLS demandée sur : {args.domain}\n")
+
+        result = check_tls(args.domain)
+
+        if result["valid"]:
+
+            print("Certificat valide : Oui")
+            print(f"Expiration : {result['expiration']}")
+            print(
+                f"Jours restants : {result['days_remaining']}"
+            )
+
+        else:
+
+            print("Certificat valide : Non")
+            print(result["error"])
 
     else:
         parser.print_help()
