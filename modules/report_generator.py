@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+from modules.recommendations import generate_recommendations
 
 
 def generate_report(
@@ -38,16 +39,40 @@ def generate_report(
         report.write("## Scan des ports TCP\n\n")
 
 
+        open_ports = []
+
+        filtered_ports = 0
+
         for result in port_results:
+            if result["state"] == "OPEN":
+                open_ports.append(result)
+
+            elif result["state"] == "FILTERED":
+                filtered_ports += 1
+
+
+        report.write("### Ports ouverts\n\n")
+
+        for port in open_ports:
             report.write(
-                f"- Port {result['port']} : {result['state']}\n"
+                f"- Port {port['port']} : {port['state']}\n"
             )
 
+
+        report.write("\n### Ports filtrés\n\n")
+
+        report.write(
+            f"{filtered_ports} ports filtrés.\n"
+        )
 
         if http_results:
 
             report.write("\n## Analyse des en-têtes HTTP\n\n")
-
+           
+            recommendations = generate_recommendations(
+                http_results,
+                port_results
+            )
 
             for header, value in http_results.items():
                 report.write(
@@ -63,6 +88,12 @@ def generate_report(
                 f"**Niveau : {level}**\n"
             )
 
+            report.write("\n## Recommandations\n\n")
+
+        for recommendation in recommendations:
+            report.write(
+                f"- {recommendation}\n"
+            )
 
     return filename
 
@@ -74,7 +105,7 @@ if __name__ == "__main__":
     ]
 
     headers = {
-        "Strict-Transport-Encryption": "Absent",
+        "Strict-Transport-Security": "Absent",
         "Content-Security-Policy": "Absent",
         "X-Frame-Options": "Absent",
         "X-Content-Type-Options": "Absent"
