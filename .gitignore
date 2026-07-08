@@ -5,9 +5,12 @@
 __pycache__/
 *.pyc
 
-# Rapports générés
-reports/*.md
-reports/*.html
+# Rapports générés automatiquement
+reports/audit_*.md
+reports/audit_*.html
+
+# Exemple de rapport conservé pour le rendu
+!reports/exemple_rapport.md
 
 # Paramètres VS Code
 .vscode/

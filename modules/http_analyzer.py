@@ -30,8 +30,22 @@ def analyze_headers(url):
 
         return headers
 
-    except requests.exceptions.RequestException as e:
-        print(f"Erreur : {e}")
+    except requests.exceptions.Timeout:
+        print(
+            "Erreur HTTP : délai d'attente dépassé."
+        )
+        return None
+
+    except requests.exceptions.ConnectionError:
+        print(
+            "Erreur HTTP : impossible de joindre le serveur."
+        )
+        return None
+
+    except requests.exceptions.RequestException:
+        print(
+            "Erreur HTTP : requête impossible."
+        )
         return None
 
 def calculate_score(headers):

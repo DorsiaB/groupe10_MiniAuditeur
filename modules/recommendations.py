@@ -47,7 +47,7 @@ def generate_recommendations(headers, ports, tls_results=None):
                 recommendations.append(
                     "Vérifier la configuration SMTP afin d'éviter un relais ouvert."
                 )
-    if tls_results:
+    if tls_results and tls_results.get("valid"):
 
         if tls_results["status"] == "ATTENTION":
 
@@ -68,5 +68,4 @@ def generate_recommendations(headers, ports, tls_results=None):
             recommendations.append(
                 "Le certificat TLS est expiré. Le remplacer immédiatement."
             )
-
     return recommendations

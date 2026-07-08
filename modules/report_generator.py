@@ -36,6 +36,54 @@ def generate_report(
             f"**Cible analysée :** {target}\n\n"
         )
 
+        report.write("## Résumé global du risque\n\n")
+
+        open_ports_count = 0
+
+        for result in port_results:
+            if result["state"] == "OPEN":
+                open_ports_count += 1
+
+
+        risk_level = "Faible"
+
+        if open_ports_count > 5:
+            risk_level = "Moyen"
+
+        if open_ports_count > 10:
+            risk_level = "Élevé"
+
+        report.write(
+            f"- Niveau global du risque : {risk_level}\n"
+        )
+        
+        report.write(
+            f"- Ports ouverts détectés : {open_ports_count}\n"
+        )
+
+        if http_results:
+            report.write(
+                f"- Niveau de sécurité HTTP : {level}\n"
+            )
+
+        else:
+            report.write(
+                "- Analyse HTTP : indisponible\n"
+            )
+
+        if tls_results:
+
+            if tls_results["valid"]:
+                report.write(
+                    "- Certificat TLS : valide\n"
+                )
+
+            else:
+                report.write(
+                    f"- Certificat TLS : erreur ({tls_results.get('error', 'inconnue')})\n"
+                )
+
+        report.write("\n")
 
         report.write("## Scan des ports TCP\n\n")
 
@@ -93,13 +141,48 @@ def generate_report(
             else:
 
                 report.write(
-                    "- Certificat : Invalide\n"
+                    "- Certificat : Analyse impossible\n"
                 )
 
                 report.write(
                     f"- Erreur : {tls_results.get('error', 'Erreur inconnue')}\n"
                 )
                 
+        if http_results:
+
+            report.write(
+                "\n## Analyse des en-têtes HTTP\n\n"
+            )
+
+            for header, value in http_results.items():
+
+                report.write(
+                    f"- {header} : {value}\n"
+                )
+
+            if score is not None:
+
+                report.write(
+                    f"\nScore sécurité : {score}/4\n"
+                )
+
+            if level:
+
+                report.write(
+                    f"Niveau : {level}\n"
+                )
+
+        else:
+
+            report.write(
+                "\n## Analyse des en-têtes HTTP\n\n"
+            )
+
+            report.write(
+                "Analyse impossible : aucune donnée HTTP disponible.\n"
+            )
+
+
         recommendations = generate_recommendations(
             http_results,
             port_results,
@@ -117,27 +200,3 @@ def generate_report(
                     f"- {recommendation}\n"
                 )
     return filename
-
-if __name__ == "__main__":
-
-    ports = [
-        {"port": 22, "state": "OPEN"},
-        {"port": 80, "state": "OPEN"}
-    ]
-
-    headers = {
-        "Strict-Transport-Security": "Absent",
-        "Content-Security-Policy": "Absent",
-        "X-Frame-Options": "Absent",
-        "X-Content-Type-Options": "Absent"
-    }
-
-    file = generate_report(
-        "scanme.nmap.org",
-        ports,
-        headers,
-        0,
-        "Faible"
-    )
-
-    print(f"Rapport créé : {file}")
