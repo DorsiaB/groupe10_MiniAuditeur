@@ -148,18 +148,22 @@ def main():
         level = None
         tls_results = None
 
-        if args.url:
+    if args.url:
 
-            headers = analyze_headers(args.url)
+        headers = analyze_headers(args.url)
 
-            tls_results = check_tls(
-                args.url.replace("https://", "")
-            )
+        domain = (
+            args.url
+            .replace("https://", "")
+            .replace("http://", "")
+            .split("/")[0]
+        )
 
+        tls_results = check_tls(domain)
 
-            if headers:
-                score = calculate_score(headers)
-                level = security_level(score)
+        if headers:
+            score = calculate_score(headers)
+            level = security_level(score)
 
 
         report = generate_report(

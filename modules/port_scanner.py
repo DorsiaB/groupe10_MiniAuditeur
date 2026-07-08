@@ -68,14 +68,3 @@ def scan_ports(target, start_port, end_port):
 
     return results
 
-if __name__ == "__main__":
-    results = scan_ports(
-        "scanme.nmap.org",
-        20,
-        100
-    )
-
-    for result in results:
-        print(
-            f"Port {result['port']} : {result['state']}"
-        )

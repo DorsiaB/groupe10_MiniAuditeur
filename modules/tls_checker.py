@@ -30,7 +30,7 @@ def check_tls(domain):
 
         with socket.create_connection(
             (domain, 443),
-            timeout=5
+            timeout=15
         ) as sock:
 
             with context.wrap_socket(
@@ -59,15 +59,34 @@ def check_tls(domain):
         }
 
 
-    except Exception as e:
+    except socket.timeout:
 
         return {
             "valid": False,
-            "error": str(e)
+            "error": "Délai d'attente dépassé lors de la connexion TLS."
         }
 
-if __name__ == "__main__":
 
-    result = check_tls("example.com")
+    except ConnectionRefusedError:
 
-    print(result)
+        return {
+            "valid": False,
+            "error": "Connexion TLS refusée par la cible."
+        }
+
+
+    except ssl.SSLError:
+
+        return {
+            "valid": False,
+            "error": "Erreur lors de l'établissement de la connexion TLS."
+        }
+
+
+    except Exception:
+
+        return {
+            "valid": False,
+            "error": "Impossible de vérifier le certificat TLS."
+        }
+

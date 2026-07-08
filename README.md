@@ -218,10 +218,10 @@ Cette commande exécute :
 
 Les principales dépendances utilisées sont :
 
-* `requests` : récupération des informations HTTP.
+* `* `requests` : récupération des informations HTTP.
+* `beautifulsoup4` : dépendance prévue pour de futures évolutions d'analyse web.
 
 Les autres modules utilisés proviennent de la bibliothèque standard Python.
-
 ---
 
 # Cibles utilisées pour les tests

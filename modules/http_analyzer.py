@@ -77,23 +77,3 @@ def security_level(score):
     else:
         return "Faible"
 
-if __name__ == "__main__":
-    url = "https://example.com"
-
-    headers = analyze_headers(url)
-
-    if headers is None:
-        print("Impossible d'analyser cette URL.")
-
-    else:
-        print(f"Analyse de : {url}\n")
-
-        for header, value in headers.items():
-            print(f"{header} : {value}")
-
-        score = calculate_score(headers)
-
-        level = security_level(score)
-
-        print(f"\nScore de sécurité : {score}/4")
-        print(f"Niveau : {level}")
